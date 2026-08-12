@@ -1,18 +1,17 @@
-source(
-  testthat::test_path("..", "..", "R", "data_contract.R")
-)
-source(
-  testthat::test_path("..", "..", "R", "quality_audit.R")
-)
+candidate_roots <- c(".", "..", "../..")
+project_root <- candidate_roots[
+  file.exists(file.path(candidate_roots, "R", "data_contract.R"))
+][1]
+if (is.na(project_root)) {
+  stop("Could not locate the project root for tests.")
+}
+
+source(file.path(project_root, "R", "data_contract.R"))
+source(file.path(project_root, "R", "quality_audit.R"))
 
 test_that("a conforming dataset returns no issues", {
   contract <- read_data_contract(
-    testthat::test_path(
-      "..",
-      "..",
-      "config",
-      "evaluation_records.yml"
-    )
+    file.path(project_root, "config", "evaluation_records.yml")
   )
   clean <- data.frame(
     record_id = c("R001", "R002"),
@@ -30,20 +29,10 @@ test_that("a conforming dataset returns no issues", {
 
 test_that("duplicate, domain, range, and date errors are detected", {
   contract <- read_data_contract(
-    testthat::test_path(
-      "..",
-      "..",
-      "config",
-      "evaluation_records.yml"
-    )
+    file.path(project_root, "config", "evaluation_records.yml")
   )
   problem <- read.csv(
-    testthat::test_path(
-      "..",
-      "..",
-      "examples",
-      "problem_records.csv"
-    ),
+    file.path(project_root, "examples", "problem_records.csv"),
     na.strings = c("", "NA"),
     stringsAsFactors = FALSE
   )
@@ -68,12 +57,7 @@ test_that("duplicate, domain, range, and date errors are detected", {
 
 test_that("required columns are enforced", {
   contract <- read_data_contract(
-    testthat::test_path(
-      "..",
-      "..",
-      "config",
-      "evaluation_records.yml"
-    )
+    file.path(project_root, "config", "evaluation_records.yml")
   )
   incomplete <- data.frame(record_id = "R001")
 
