@@ -1,0 +1,47 @@
+dataset: evaluation_records
+description: Synthetic records used to demonstrate pre-analysis validation.
+primary_key: record_id
+
+columns:
+  record_id:
+    type: character
+    required: true
+    nullable: false
+    unique: true
+  site_id:
+    type: character
+    required: true
+    nullable: false
+  program:
+    type: character
+    required: true
+    nullable: false
+    allowed:
+      - comparison
+      - intervention
+  baseline_score:
+    type: numeric
+    required: true
+    nullable: false
+    min: 0
+    max: 100
+  outcome:
+    type: numeric
+    required: true
+    nullable: true
+    min: 0
+    max: 100
+  enrollment_date:
+    type: date
+    required: true
+    nullable: false
+  followup_date:
+    type: date
+    required: true
+    nullable: true
+
+rules:
+  - name: followup_not_before_enrollment
+    type: date_order
+    earlier: enrollment_date
+    later: followup_date

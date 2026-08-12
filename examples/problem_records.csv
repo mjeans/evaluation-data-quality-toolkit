@@ -1,0 +1,5 @@
+record_id,site_id,program,baseline_score,outcome,enrollment_date,followup_date
+R001,S01,comparison,55,61,2026-01-02,2026-06-02
+R002,S01,intervention,101,70,2026-01-12,2026-06-12
+R002,S02,intervention,48,,2026-02-01,2026-01-15
+R004,,pilot,40,50,2026-02-08,2026-06-08
