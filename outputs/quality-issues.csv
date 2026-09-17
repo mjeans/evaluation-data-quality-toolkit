@@ -1,0 +1,6 @@
+check,severity,column,n_failed,detail
+unique,error,record_id,2,Duplicate value in a unique field.
+not_null,error,site_id,1,Missing or blank value in a nonnullable field.
+allowed_values,error,program,1,"Value outside permitted set: comparison, intervention"
+maximum,error,baseline_score,1,Value is above 100
+followup_not_before_enrollment,error,enrollment_date -> followup_date,1,followup_date occurs before enrollment_date

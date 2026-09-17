@@ -31,3 +31,4 @@ message(
   " issue type(s)."
 )
 print(issues)
+source("examples/date_resolution.R")

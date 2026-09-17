@@ -32,7 +32,18 @@ is_blank <- function(x) {
   is.na(x) | (is.character(x) & trimws(x) == "")
 }
 
-type_failures <- function(x, expected_type) {
+parse_contract_date <- function(x, date_format = "%Y-%m-%d") {
+  if (inherits(x, "Date")) return(x)
+  value <- as.character(x)
+  # Explicit format avoids throwing on a malformed first observation.
+  parsed <- suppressWarnings(as.Date(value, format = date_format))
+  valid <- !is.na(parsed) & !is.na(value) &
+    format(parsed, date_format) == value
+  parsed[!valid] <- as.Date(NA)
+  parsed
+}
+
+type_failures <- function(x, expected_type, date_format = "%Y-%m-%d") {
   available <- !is_blank(x)
   if (!any(available)) {
     return(rep(FALSE, length(x)))
@@ -51,7 +62,7 @@ type_failures <- function(x, expected_type) {
       if (inherits(x, "Date")) {
         rep(TRUE, length(x))
       } else {
-        !is.na(suppressWarnings(as.Date(as.character(x))))
+        !is.na(parse_contract_date(x, date_format))
       }
     },
     stop("Unsupported contract type: ", expected_type)
@@ -105,7 +116,7 @@ run_quality_audit <- function(data, contract) {
     }
 
     if (!is.null(rules$type)) {
-      failed <- type_failures(values, rules$type)
+      failed <- type_failures(values, rules$type, rules$format %||% "%Y-%m-%d")
       if (any(failed)) {
         add_issue(
           issue_row(
@@ -189,8 +200,10 @@ run_quality_audit <- function(data, contract) {
         next
       }
 
-      earlier <- suppressWarnings(as.Date(as.character(data[[rule$earlier]])))
-      later <- suppressWarnings(as.Date(as.character(data[[rule$later]])))
+      earlier <- parse_contract_date(data[[rule$earlier]],
+        contract$columns[[rule$earlier]]$format %||% "%Y-%m-%d")
+      later <- parse_contract_date(data[[rule$later]],
+        contract$columns[[rule$later]]$format %||% "%Y-%m-%d")
       failed <- !is.na(earlier) & !is.na(later) & later < earlier
 
       if (any(failed)) {
