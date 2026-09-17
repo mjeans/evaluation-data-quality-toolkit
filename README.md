@@ -58,10 +58,10 @@ tests/testthat/
 
 ## Run the example
 
-With R 4.4 or later:
+With R 4.6.x (reference: 4.6.1):
 
 ~~~r
-install.packages(c("readr", "testthat", "yaml"))
+source("scripts/restore_environment.R")
 
 source("R/data_contract.R")
 source("R/quality_audit.R")
@@ -81,6 +81,8 @@ The example intentionally contains a duplicate key, a missing site identifier, a
 
 ## Design choices
 
+Dates follow a strict declared format; invalid dates become reportable issues, including when every date is invalid. See the [date policy and failure-to-resolution example](docs/date-policy.md), [executed aggregate audit](outputs/quality-report.md), and [reference R session](outputs/session-info.txt).
+
 The core functions return ordinary data frames and use base R for validation. Only YAML parsing and example-file reading require packages. This keeps the logic inspectable and makes it easier to embed in an existing pipeline.
 
 The SQL examples are intentionally straightforward and portable to AWS Athena/Trino-style warehouses. They demonstrate useful validation queries without implying advanced database engineering.
@@ -92,3 +94,7 @@ Data governance · validation rules · data contracts · automated testing · au
 ## License
 
 MIT
+
+## Reproducible environment
+
+Restore dependencies with `Rscript scripts/restore_environment.R` before running the analysis from the repository root. See [environment notes](docs/environment.md) and the committed `renv.lock`.
